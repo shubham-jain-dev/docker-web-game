@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Memory Match Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #ff8a00, #e52e71);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .menu, .footer, .win-message {
+      text-align: center;
+    }
+
+    .menu button,
+    #restartButton {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu button:hover,
+    #restartButton:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    .game-board {
+      display: grid;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 90px;
+      height: 120px;
+      position: relative;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .front {
+      background: #222;
+    }
+
+    .back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+    }
+
+    .matched .card-inner {
+      cursor: default;
+      box-shadow: 0 0 10px 4px #00ffcc;
+    }
+
+    .win-message {
+      font-size: 2rem;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 1rem;
+      color: #eee;
+      opacity: 0.8;
+    }
+
+    #restartButton {
+      display: none;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 70px;
+        height: 100px;
+      }
+
+      .game-board {
+        gap: 10px;
+      }
+
+      .menu button {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="menu" class="menu">
+    <h1>✨ Memory Match Game ✨</h1>
+    <button onclick="startGame('easy')">Easy (6 cards)</button>
+    <button onclick="startGame('medium')">Medium (10 cards)</button>
+    <button onclick="startGame('hard')">Hard (18 cards)</button>
+  </div>
+
+  <div class="game-board" id="gameBoard" style="display: none;"></div>
+  <div class="win-message" id="winMessage">🎉 You Won!</div>
+  <button id="restartButton" onclick="restartGame()">🔁 Restart</button>
+
+  <div class="footer">Developed by Shubham Jain</div>
+
+  <script>
+    const emojiPool = ['🍕', '🍔', '🍩', '🍟', '🍪', '🍇', '🍉', '🍣', '🍫', '🍓', '🍒', '🍎', '🥑', '🍰', '🍬', '🍤', '🍜', '🥥'];
+    const menu = document.getElementById('menu');
+    const gameBoard = document.getElementById('gameBoard');
+    const winMessage = document.getElementById('winMessage');
+    const restartButton = document.getElementById('restartButton');
+
+    let flippedCards = [];
+    let matchedCount = 0;
+    let totalCards = 0;
+    let currentDifficulty = '';
+
+    function startGame(difficulty) {
+      menu.style.display = 'none';
+      gameBoard.style.display = 'grid';
+      winMessage.style.display = 'none';
+      restartButton.style.display = 'none';
+      gameBoard.innerHTML = '';
+      flippedCards = [];
+      matchedCount = 0;
+      currentDifficulty = difficulty;
+
+      let pairCount = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 5 : 9;
+      totalCards = pairCount * 2;
+
+      const selectedEmojis = emojiPool.slice(0, pairCount);
+      const cardsArray = [...selectedEmojis, ...selectedEmojis].sort(() => 0.5 - Math.random());
+
+      if (totalCards <= 6) {
+        gameBoard.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      } else if (totalCards <= 10) {
+        gameBoard.style.gridTemplateColumns = 'repeat(5, 1fr)';
+      } else {
+        gameBoard.style.gridTemplateColumns = 'repeat(6, 1fr)';
+      }
+
+      cardsArray.forEach((emoji) => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.dataset.emoji = emoji;
+
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="face front">?</div>
+            <div class="face back">${emoji}</div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => handleFlip(card));
+        gameBoard.appendChild(card);
+      });
+    }
+
+    function handleFlip(card) {
+      if (
+        card.classList.contains('flipped') ||
+        card.classList.contains('matched') ||
+        flippedCards.length === 2
+      ) return;
+
+      card.classList.add('flipped');
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.emoji === card2.dataset.emoji) {
+          card1.classList.add('matched');
+          card2.classList.add('matched');
+          matchedCount += 2;
+          flippedCards = [];
+
+          if (matchedCount === totalCards) {
+            winMessage.style.display = 'block';
+            restartButton.style.display = 'inline-block';
+          }
+        } else {
+          setTimeout(() => {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+            flippedCards = [];
+          }, 800);
+        }
+      }
+    }
+
+    function restartGame() {
+      startGame(currentDifficulty);
+    }
+  </script>
+
+</body>
+</html>
