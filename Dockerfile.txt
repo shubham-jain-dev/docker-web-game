@@ -1,0 +1,14 @@
+# Use the official Rocky Linux 8 base image
+FROM rockylinux:8
+
+# Install the Apache HTTP server package
+RUN dnf install -y httpd && dnf clean all
+
+# Copy the index.html file to the Apache document root
+COPY index.html /var/www/html/
+
+# Start Apache in the foreground
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+
+# Expose port 80 for HTTP traffic
+EXPOSE 80
