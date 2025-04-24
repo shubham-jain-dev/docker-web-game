@@ -1,8 +1,7 @@
+
 # 🃏 Card Flip Memory Game
 
 A fun and interactive **Card Flip Memory Game** built with vanilla HTML, CSS, and JavaScript — containerized with **Docker** and deployed on an **AWS EC2 instance** using **Rocky Linux 8**.
-
-![Preview Screenshot](https://github.com/shubham-jain-dev/docker-web-game/raw/main/images/preview.png) <!-- Replace with actual screenshot if available -->
 
 ---
 
@@ -27,11 +26,16 @@ A fun and interactive **Card Flip Memory Game** built with vanilla HTML, CSS, an
 ---
 
 ## 📁 Project Structure
-. ├── Dockerfile # Docker configuration 
-  ├── index.html # Main game UI 
-  ├── style.css # Styles and animations 
-  ├── script.js # Game logic 
-  
+
+```
+.
+├── Dockerfile          # Docker configuration
+├── index.html          # Main game UI
+├── style.css           # Styles and animations
+├── script.js           # Game logic
+└── images/             # Card images and assets
+```
+
 ---
 
 ## 🐳 Run the Game Using Docker
@@ -40,48 +44,49 @@ A fun and interactive **Card Flip Memory Game** built with vanilla HTML, CSS, an
 ```bash
 git clone https://github.com/shubham-jain-dev/docker-web-game.git
 cd docker-web-game
-2. Build the Docker Image
-bash
-Copy
-Edit
+```
+
+### 2. Build the Docker Image
+```bash
 docker build -t card-flip-game .
-3. Run the Container
-bash
-Copy
-Edit
+```
+
+### 3. Run the Container
+```bash
 docker run -d -p 80:80 card-flip-game
-Now open http://localhost in your browser and play the game!
+```
 
-🌐 Deploying to AWS EC2
-Launch an EC2 instance (Amazon Linux / Rocky Linux 8)
+Now open [http://localhost](http://localhost) in your browser and play the game!
 
-SSH into the instance:
+---
 
-bash
-Copy
-Edit
-ssh -i your-key.pem ec2-user@your-ec2-ip
-Install Docker:
+## 🌐 Deploying to AWS EC2
 
-bash
-Copy
-Edit
-sudo dnf install -y docker
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker ec2-user
-Clone, build, and run the container:
+1. Launch an EC2 instance (Amazon Linux / Rocky Linux 8)
+2. SSH into the instance:
+   ```bash
+   ssh -i your-key.pem ec2-user@your-ec2-ip
+   ```
+3. Install Docker:
+   ```bash
+   sudo dnf install -y docker
+   sudo systemctl start docker
+   sudo systemctl enable docker
+   sudo usermod -aG docker ec2-user
+   ```
+4. Clone, build, and run the container:
+   ```bash
+   git clone https://github.com/shubham-jain-dev/docker-web-game.git
+   cd docker-web-game
+   docker build -t card-flip-game .
+   docker run -d -p 80:80 card-flip-game
+   ```
 
-bash
-Copy
-Edit
-git clone https://github.com/shubham-jain-dev/docker-web-game.git
-cd docker-web-game
-docker build -t card-flip-game .
-docker run -d -p 80:80 card-flip-game
-Access the game at:
-http://your-ec2-public-ip
+Access the game at:  
+**http://your-ec2-public-ip**
 
-🙌 Acknowledgments
-Created with ❤️ by Shubham Jain
+---
 
+## 🙌 Acknowledgments
+
+Created with ❤️ by [Shubham Jain](https://github.com/shubham-jain-dev)
