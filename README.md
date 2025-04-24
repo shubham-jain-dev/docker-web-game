@@ -27,4 +27,61 @@ A fun and interactive **Card Flip Memory Game** built with vanilla HTML, CSS, an
 ---
 
 ## 📁 Project Structure
+. ├── Dockerfile # Docker configuration 
+  ├── index.html # Main game UI 
+  ├── style.css # Styles and animations 
+  ├── script.js # Game logic 
+  
+---
+
+## 🐳 Run the Game Using Docker
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/shubham-jain-dev/docker-web-game.git
+cd docker-web-game
+2. Build the Docker Image
+bash
+Copy
+Edit
+docker build -t card-flip-game .
+3. Run the Container
+bash
+Copy
+Edit
+docker run -d -p 80:80 card-flip-game
+Now open http://localhost in your browser and play the game!
+
+🌐 Deploying to AWS EC2
+Launch an EC2 instance (Amazon Linux / Rocky Linux 8)
+
+SSH into the instance:
+
+bash
+Copy
+Edit
+ssh -i your-key.pem ec2-user@your-ec2-ip
+Install Docker:
+
+bash
+Copy
+Edit
+sudo dnf install -y docker
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker ec2-user
+Clone, build, and run the container:
+
+bash
+Copy
+Edit
+git clone https://github.com/shubham-jain-dev/docker-web-game.git
+cd docker-web-game
+docker build -t card-flip-game .
+docker run -d -p 80:80 card-flip-game
+Access the game at:
+http://your-ec2-public-ip
+
+🙌 Acknowledgments
+Created with ❤️ by Shubham Jain
 
